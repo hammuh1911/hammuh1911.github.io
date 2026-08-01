@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<title>Tier 1 Litigation Expected Value Model</title>
+<title>Tier 1 (Low): Litigation Expected Value Model</title>
 
 <link rel="stylesheet" href="styles.css">
 
@@ -62,20 +62,25 @@ expected cost of continued litigation.
 <h3>Plaintiff Expected Trial Verdict</h3>
 
 <pre><code>
-EVplaintiff = Pwin × D
+EV<sub>Plaintiff</sub> = P<sub>win</sub> × D
 </code></pre>
 
 <h3>Expected Defense Cost of Litigation</h3>
 
 <pre><code>
-EVdefendant = (Pwin × D) + CD
+EV<sub>Defendant</sub> = (P<sub>win</sub> × D) + C<sub>D</sub>
 </code></pre>
 
 <h3>Target Settlement Window (ZOPA)</h3>
 
 <pre><code>
-EVplaintiff ≤ Settlement ≤ min(EVdefendant, Policy Limits)
+EV<sub>Plaintiff</sub> ≤ Settlement ≤ min(EV<sub>Defendant</sub>, L)
 </code></pre>
+
+<p>
+where <b>L</b> represents applicable insurance policy limits or other practical
+collection constraints.
+</p>
 
 <hr>
 
@@ -89,9 +94,10 @@ Defense Costs ............. $15,000
 Plaintiff Expected Verdict:        $60,000
 Defense Expected Outlay:           $75,000
 
-Suggested Settlement Window
+Suggested Settlement Window (ZOPA)
 
-$60,000  <------------->  $75,000
+$60,000  <-------------------->  $75,000
+ Plaintiff Floor            Defense Ceiling
 </code></pre>
 
 <hr>
@@ -105,7 +111,11 @@ large language model.
 
 </p>
 
-<pre><code>You are an expert legal risk analyst and litigation strategist. Your task is to process a quick civil claim evaluation using the Tier 1 (Low) Litigation Model and generate a concise valuation summary.
+<button onclick="copyPrompt()">
+Copy Prompt
+</button>
+
+<pre><code id="tier1Prompt">You are an expert legal risk analyst and litigation strategist. Your task is to process a quick civil claim evaluation using the Tier 1 (Low) Litigation Model and generate a concise valuation summary.
 
 ### MATHEMATICAL MODEL FORMULAS:
 
@@ -138,19 +148,80 @@ EV_plaintiff to Min(EV_defendant, Policy_Limit)
 
 <ul>
 
-<li>Tier 2 – Intermediate Litigation Economics Model (Coming Soon)</li>
+<li>
+<b>Tier 2 (Intermediate)</b> – Comparative fault,
+policy limits, plaintiff litigation costs,
+time discounting, and expanded damages analysis.
+<i>(Coming Soon)</i>
+</li>
 
-<li>Tier 3 – Dynamic Stochastic Litigation Game (Coming Soon)</li>
+<li>
+<b>Tier 3 (Advanced)</b> – Dynamic stochastic game,
+Bayesian updating, sequential settlement,
+discovery, and trial strategy.
+<i>(Coming Soon)</i>
+</li>
 
 </ul>
+<hr>
+
+<p>
+
+Last Updated: July 2026
+
+</p>
 
 <hr>
+
+<h2>Disclaimer</h2>
+
+<p>
+
+This litigation valuation framework is intended solely for educational,
+research, and decision-support purposes. The estimates produced by these
+models are scenario-based calculations derived from user-supplied assumptions
+and should not be interpreted as predictions or guarantees of litigation
+outcomes.
+
+</p>
+
+<p>
+
+Actual case values depend on numerous legal, factual, evidentiary, procedural,
+and strategic considerations—including witness credibility, judicial rulings,
+jury determinations, evolving evidence, settlement negotiations, and applicable
+law—that cannot be fully captured by any mathematical model.
+
+</p>
+
+<p>
+
+Users should exercise independent professional judgment and verify all inputs,
+assumptions, and applicable legal standards before relying on these models in
+practice.
+
+</p>
 
 <p>
 
 <a href="projects.html">Return to Projects</a>
 
 </p>
+
+<script>
+
+function copyPrompt() {
+
+    const prompt =
+        document.getElementById("tier1Prompt").innerText;
+
+    navigator.clipboard.writeText(prompt)
+        .then(() => alert("Prompt copied to clipboard!"))
+        .catch(() => alert("Unable to copy prompt."));
+
+}
+
+</script>
 
 </body>
 

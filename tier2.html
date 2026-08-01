@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Tier 2 (Intermediate): Risk-Adjusted Litigation Valuation Model</title>
+
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<h1>Tier 2 (Intermediate): Risk-Adjusted Litigation Valuation Model</h1>
+
+<nav>
+
+<a href="index.html">Home</a> |
+<a href="projects.html">Projects</a>
+
+</nav>
+
+<hr>
+
+<h2>Overview</h2>
+
+<p>
+
+The Tier 2 model extends the Tier 1 expected value framework by incorporating
+comparative fault, separate liability and causation probabilities, plaintiff
+litigation costs, jurisdiction-specific comparative fault rules, and policy
+limit analysis. It is designed for cases where additional factual development
+has occurred through investigation or discovery.
+
+</p>
+
+<hr>
+
+<h2>Mathematical Specification</h2>
+
+<h3>Inputs</h3>
+
+<ul>
+
+<li><b>D<sub>econ</sub></b> – Economic damages (medical expenses, lost wages, etc.)</li>
+
+<li><b>D<sub>non-econ</sub></b> – Non-economic damages (pain and suffering, etc.)</li>
+
+<li><b>CF</b> – Plaintiff comparative fault percentage</li>
+
+<li><b>P<sub>L</sub></b> – Probability of prevailing on liability</li>
+
+<li><b>P<sub>C</sub></b> – Probability of prevailing on causation</li>
+
+<li><b>C<sub>P</sub></b> – Plaintiff litigation costs</li>
+
+<li><b>C<sub>D</sub></b> – Defense litigation costs</li>
+
+<li><b>L</b> – Applicable liability insurance policy limit or collectible asset cap</li>
+
+</ul>
+
+<hr>
+
+<h2>Jurisdiction Comparative Fault Rule</h2>
+
+<p>
+
+Select the jurisdiction's comparative fault rule.
+
+</p>
+
+<h3>Pure Comparative Fault</h3>
+
+<pre><code>
+D<sub>adj</sub> =
+(D<sub>econ</sub> + D<sub>non-econ</sub>) × (1 − CF)
+</code></pre>
+
+<h3>Modified Comparative Fault (50% Bar)</h3>
+
+<pre><code>
+If CF &lt; 50%
+
+D<sub>adj</sub> =
+(D<sub>econ</sub> + D<sub>non-econ</sub>) × (1 − CF)
+
+Otherwise
+
+D<sub>adj</sub> = 0
+</code></pre>
+
+<h3>Modified Comparative Fault (51% Bar)</h3>
+
+<pre><code>
+If CF &lt; 51%
+
+D<sub>adj</sub> =
+(D<sub>econ</sub> + D<sub>non-econ</sub>) × (1 − CF)
+
+Otherwise
+
+D<sub>adj</sub> = 0
+</code></pre>
+
+<hr>
+
+<h2>Joint Probability Model</h2>
+
+<p>
+
+The model approximates the overall probability of success by separately
+estimating liability and causation.
+
+</p>
+
+<pre><code>
+P<sub>win</sub> =
+P<sub>L</sub> × P<sub>C</sub>
+</code></pre>
+
+<p>
+
+<b>Modeling Assumption.</b> The Tier 2 model treats liability and causation as
+independent events for estimation purposes. Where substantial evidentiary
+overlap exists, users should interpret this approximation cautiously or
+substitute a case-specific joint probability estimate.
+
+</p>
+
+<hr>
+
+<h2>Core Valuation Equations</h2>
+
+<h3>Expected Trial Verdict</h3>
+
+<pre><code>
+EV<sub>Trial</sub> =
+P<sub>win</sub> × D<sub>adj</sub>
+</code></pre>
+
+<h3>Expected Defense Cost of Litigation</h3>
+
+<pre><code>
+EV<sub>Defense</sub> =
+EV<sub>Trial</sub> + C<sub>D</sub>
+</code></pre>
+
+<h3>Plaintiff Reservation Value</h3>
+
+<pre><code>
+S<sub>min</sub> =
+EV<sub>Trial</sub> − C<sub>P</sub>
+</code></pre>
+
+<h3>Defense Reservation Value</h3>
+
+<pre><code>
+S<sub>max</sub> =
+min(EV<sub>Defense</sub>, L)
+</code></pre>
+
+<h3>Settlement Window (ZOPA)</h3>
+
+<pre><code>
+S<sub>min</sub> ≤ Settlement ≤ S<sub>max</sub>
+</code></pre>
+
+<hr>
+
+<h2>Policy Limit Analysis</h2>
+
+<p>
+
+If
+
+</p>
+
+<pre><code>
+EV<sub>Trial</sub> &gt; L
+</code></pre>
+
+<p>
+
+the model flags potential excess judgment exposure and recommends evaluating
+the jurisdiction's applicable policy-limit demand and bad-faith rules.
+
+</p>
+
+<hr>
+
+<h2>Worked Example</h2>
+
+<pre><code>
+Economic Damages .............. $150,000
+
+Non-Economic Damages .......... $100,000
+
+Comparative Fault ............. 20%
+
+Liability Probability ......... 80%
+
+Causation Probability ......... 90%
+
+Defense Costs ................. $25,000
+
+Policy Limit .................. $100,000
+
+
+Adjusted Damages .............. $200,000
+
+Net Win Probability ........... 72%
+
+Expected Trial Verdict ........ $144,000
+
+Defense Expected Exposure ..... $169,000
+
+
+Policy Limit Alert
+
+Expected Verdict exceeds available policy limit.
+Potential excess exposure exists.
+</code></pre>
+
+<hr>
+
+<h2>Reusable Tier 2 (Intermediate) System Prompt</h2>
+
+<p>
+
+Copy and paste the following prompt into ChatGPT, Claude, Gemini, or another
+large language model.
+
+</p>
+
+<button onclick="copyPrompt()">
+
+Copy Prompt
+
+</button>
+
+<pre><code id="tier2Prompt">
+You are an expert legal risk analyst and litigation strategist. Your task is to process a civil litigation case using the Tier 2 (Intermediate) Litigation Model and generate a structured valuation report.
+
+### INPUTS
+
+• Jurisdiction Rule (Pure / Mod50 / Mod51)
+
+• Economic Damages
+
+• Non-Economic Damages
+
+• Comparative Fault
+
+• Liability Probability
+
+• Causation Probability
+
+• Plaintiff Litigation Costs
+
+• Defense Litigation Costs
+
+• Policy Limit
+
+### FORMULAS
+
+Pwin = PL × PC
+
+Dadj = (Decon + Dnonecon) × (1 − CF)
+
+EVTrial = Pwin × Dadj
+
+EVDefense = EVTrial + CD
+
+Smin = EVTrial − CP
+
+Smax = min(EVDefense, L)
+
+### OUTPUT
+
+1. Executive Summary
+
+2. Mathematical Breakdown
+
+3. Settlement Window
+
+4. Policy Limit Analysis
+
+5. Strategic Negotiation Recommendations
+</code></pre>
+
+<hr>
+
+<h2>Future Development</h2>
+
+<ul>
+
+<li><b>Tier 3 (Advanced)</b> – Dynamic stochastic litigation game with Bayesian updating, sequential bargaining, discovery effects, and trial strategy. <i>(Coming Soon)</i></li>
+
+</ul>
+
+<hr>
+
+<h2>Disclaimer</h2>
+
+<p>
+
+This litigation valuation framework is intended solely for educational,
+research, and decision-support purposes. The estimates produced by these
+models are scenario-based calculations derived from user-supplied assumptions
+and should not be interpreted as predictions or guarantees of litigation
+outcomes.
+
+</p>
+
+<p>
+
+Actual case values depend on numerous legal, factual, evidentiary, procedural,
+and strategic considerations—including witness credibility, judicial rulings,
+jury determinations, evolving evidence, settlement negotiations, and applicable
+law—that cannot be fully captured by any mathematical model.
+
+</p>
+
+<p>
+
+Users should exercise independent professional judgment and verify all inputs,
+assumptions, and applicable legal standards before relying on these models in
+practice.
+
+</p>
+
+<hr>
+
+<p>
+
+<a href="projects.html">Return to Projects</a>
+
+</p>
+
+<script>
+
+function copyPrompt() {
+
+    const prompt = document.getElementById("tier2Prompt").innerText;
+
+    navigator.clipboard.writeText(prompt)
+        .then(() => alert("Prompt copied to clipboard!"))
+        .catch(() => alert("Unable to copy prompt."));
+
+}
+
+</script>
+
+</body>
+
+</html>
