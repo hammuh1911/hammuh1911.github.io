@@ -242,54 +242,109 @@ Copy Prompt
 
 </button>
 
-<pre><code id="tier2Prompt">
-You are an expert legal risk analyst and litigation strategist. Your task is to process a civil litigation case using the Tier 2 (Intermediate) Litigation Model and generate a structured valuation report.
+<pre><code id="tier2Prompt">You are an expert legal risk analyst and litigation strategist. Your task is to process a civil litigation case using the Tier 2 (Intermediate) Litigation Model and generate a structured valuation report.
 
-### INPUTS
+### JURISDICTION COMPARATIVE FAULT RULE
 
-• Jurisdiction Rule (Pure / Mod50 / Mod51)
+Select one:
 
-• Economic Damages
+- Pure Comparative Fault (e.g., Kentucky)
+- Modified Comparative Fault (50% Bar)
+- Modified Comparative Fault (51% Bar)
 
-• Non-Economic Damages
+### MATHEMATICAL MODEL
 
-• Comparative Fault
+1. Comparative Fault Adjustment
 
-• Liability Probability
+If Pure:
+D_adj = (D_econ + D_nonecon) × (1 − CF)
 
-• Causation Probability
+If Modified 50:
+If CF < 50%:
+D_adj = (D_econ + D_nonecon) × (1 − CF)
+Else:
+D_adj = 0
 
-• Plaintiff Litigation Costs
+If Modified 51:
+If CF < 51%:
+D_adj = (D_econ + D_nonecon) × (1 − CF)
+Else:
+D_adj = 0
 
-• Defense Litigation Costs
+2. Joint Probability
 
-• Policy Limit
+P_win = P_liability × P_causation
 
-### FORMULAS
+3. Expected Trial Verdict
 
-Pwin = PL × PC
+EV_trial = P_win × D_adj
 
-Dadj = (Decon + Dnonecon) × (1 − CF)
+4. Expected Defense Cost
 
-EVTrial = Pwin × Dadj
+EV_defense = EV_trial + C_defense
 
-EVDefense = EVTrial + CD
+5. Plaintiff Reservation Value
 
-Smin = EVTrial − CP
+S_min = EV_trial − C_plaintiff
 
-Smax = min(EVDefense, L)
+6. Defense Reservation Value
 
-### OUTPUT
+S_max = min(EV_defense, Policy_Limit)
+
+7. Settlement Window (ZOPA)
+
+S_min ≤ Settlement ≤ S_max
+
+### INPUT CASE DATA
+
+Jurisdiction Rule:
+[INSERT Pure / Mod50 / Mod51]
+
+Economic Damages (D_econ):
+[INSERT AMOUNT]
+
+Non-Economic Damages (D_nonecon):
+[INSERT AMOUNT]
+
+Comparative Fault (CF):
+[INSERT PERCENT]
+
+Probability of Liability (P_liability):
+[INSERT PERCENT]
+
+Probability of Causation (P_causation):
+[INSERT PERCENT]
+
+Estimated Plaintiff Litigation Costs (C_plaintiff):
+[INSERT AMOUNT]
+
+Estimated Defense Litigation Costs (C_defense):
+[INSERT AMOUNT]
+
+Applicable Policy Limit / Collectibility Cap:
+[INSERT AMOUNT OR "Unknown"]
+
+### OUTPUT REQUIRED
 
 1. Executive Summary
 
-2. Mathematical Breakdown
+2. Input Summary Table
 
-3. Settlement Window
+3. Comparative Fault Calculation
 
-4. Policy Limit Analysis
+4. Probability Calculation
 
-5. Strategic Negotiation Recommendations
+5. Expected Trial Verdict
+
+6. Expected Defense Exposure
+
+7. Settlement Window (ZOPA)
+
+8. Policy Limit Analysis
+
+9. Two to Four Strategic Negotiation Takeaways
+
+10. Important Assumptions and Limitations
 </code></pre>
 
 <hr>
