@@ -83,3 +83,15 @@ hr {
     margin-bottom: 25px;
 
 }
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #cccccc;
+    padding: 15px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+code {
+    font-family: Consolas, Monaco, monospace;
+}

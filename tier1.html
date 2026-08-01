@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Tier 1 Litigation Expected Value Model</title>
+
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<h1>Tier 1 (Low) Litigation Expected Value Model</h1>
+
+<nav>
+
+<a href="index.html">Home</a> |
+<a href="projects.html">Projects</a>
+
+</nav>
+
+<hr>
+
+<h2>Overview</h2>
+
+<p>
+
+The Tier 1 model is designed for rapid civil litigation valuation using only
+three primary inputs. It provides attorneys with an immediate expected-value
+estimate and a rational settlement range under risk-neutral assumptions.
+
+</p>
+
+<hr>
+
+<h2>Mathematical Specification</h2>
+
+<p>
+
+The model assumes rational, risk-neutral parties and estimates the bargaining
+range by comparing the plaintiff's expected trial recovery with the defendant's
+expected cost of continued litigation.
+
+</p>
+
+<h3>Inputs</h3>
+
+<ul>
+
+<li><b>D</b> – Gross Expected Damages</li>
+
+<li><b>P<sub>win</sub></b> – Net Probability of Prevailing</li>
+
+<li><b>C<sub>D</sub></b> – Defense Litigation Costs Through Trial</li>
+
+</ul>
+
+<h3>Plaintiff Expected Trial Verdict</h3>
+
+<pre><code>
+EVplaintiff = Pwin × D
+</code></pre>
+
+<h3>Expected Defense Cost of Litigation</h3>
+
+<pre><code>
+EVdefendant = (Pwin × D) + CD
+</code></pre>
+
+<h3>Target Settlement Window (ZOPA)</h3>
+
+<pre><code>
+EVplaintiff ≤ Settlement ≤ min(EVdefendant, Policy Limits)
+</code></pre>
+
+<hr>
+
+<h2>Example</h2>
+
+<pre><code>
+Gross Damages ............. $100,000
+Win Probability ........... 60%
+Defense Costs ............. $15,000
+
+Plaintiff Expected Verdict:        $60,000
+Defense Expected Outlay:           $75,000
+
+Suggested Settlement Window
+
+$60,000  <------------->  $75,000
+</code></pre>
+
+<hr>
+
+<h2>Reusable Tier 1 (Low) System Prompt</h2>
+
+<p>
+
+Copy and paste the following prompt into ChatGPT, Claude, Gemini, or another
+large language model.
+
+</p>
+
+<pre><code>You are an expert legal risk analyst and litigation strategist. Your task is to process a quick civil claim evaluation using the Tier 1 (Low) Litigation Model and generate a concise valuation summary.
+
+### MATHEMATICAL MODEL FORMULAS:
+
+1. Plaintiff Expected Trial Verdict:
+EV_plaintiff = Gross_Damages * Win_Probability
+
+2. Insurer Total Financial Exposure:
+EV_defendant = EV_plaintiff + Defense_Cost_Estimate
+
+3. Target Settlement Window (ZOPA):
+EV_plaintiff to Min(EV_defendant, Policy_Limit)
+
+### INPUT CASE DATA:
+
+- Gross Expected Damages (D): [INSERT NUMBER]
+- Probability of Win % (P_win): [INSERT %]
+- Estimated Defense Trial Costs (C_D): [INSERT NUMBER]
+- Policy Limit / Asset Cap (L): [OPTIONAL]
+
+### OUTPUT REQUIRED:
+
+1. Quick Valuation Summary
+2. Target Settlement Window
+3. Two to Three Strategic Takeaways
+</code></pre>
+
+<hr>
+
+<h2>Future Development</h2>
+
+<ul>
+
+<li>Tier 2 – Intermediate Litigation Economics Model (Coming Soon)</li>
+
+<li>Tier 3 – Dynamic Stochastic Litigation Game (Coming Soon)</li>
+
+</ul>
+
+<hr>
+
+<p>
+
+<a href="projects.html">Return to Projects</a>
+
+</p>
+
+</body>
+
+</html>
