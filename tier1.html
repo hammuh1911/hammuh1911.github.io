@@ -3,18 +3,19 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tier 1 (Low): Litigation Expected Value Model</title>
-
 <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
 
 <h1>Tier 1 (Low) Litigation Expected Value Model</h1>
+
+<p><i>
+Part of the Adaptive Litigation Valuation Framework.
+</i></p>
 
 <nav>
 
@@ -30,9 +31,7 @@
 
 <p>
 
-The Tier 1 model is designed for rapid preliminary civil litigation valuation using only three primary quantitative inputs. It provides a transparent expected-value estimate and an economically rational settlement range under simplified assumptions. It provides attorneys with an immediate expected-value
-estimate and a rational settlement range under risk-neutral assumptions.
-Tier 1 is intended for early case screening, client intake, and preliminary settlement discussions before significant discovery has occurred.
+The Tier 1 model is designed for rapid preliminary civil litigation valuation using only three primary quantitative inputs. It provides a transparent expected-value estimate and an economically rational settlement range under simplified, risk-neutral assumptions. Tier 1 is intended for early case screening, client intake, and preliminary settlement discussions before significant discovery has occurred.
 </p>
 
 <hr>
@@ -86,8 +85,8 @@ collection constraints.
 
 <h2>Example</h2>
 
-<pre><code>
 The following example illustrates the model using a hypothetical civil action.
+<pre><code>
 Gross Damages ............. $100,000
 Win Probability ........... 60%
 Defense Costs ............. $15,000
@@ -123,7 +122,7 @@ Copy Prompt
 1. Plaintiff Expected Trial Verdict:
 EV_plaintiff = Gross_Damages * Win_Probability
 
-2. Insurer Total Financial Exposure:
+2. Expected Defense Cost of Litigation:
 EV_defendant = EV_plaintiff + Defense_Cost_Estimate
 
 3. Target Settlement Window (ZOPA):
