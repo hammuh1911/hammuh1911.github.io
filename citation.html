@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal Citation Verification Framework</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<h1>Legal Citation Verification Framework</h1>
+
+<nav>
+<a href="index.html">Home</a> |
+<a href="about.html">About</a> |
+<a href="projects.html">Projects</a>
+</nav>
+
+<hr>
+
+<h2>Overview</h2>
+
+<p>
+
+Large language models have significantly improved legal research and drafting,
+but they remain capable of producing fabricated or unsupported case citations,
+statutes, quotations, and legal propositions. These errors, often referred to
+as "hallucinations," have resulted in sanctions, adverse judicial attention,
+and professional embarrassment for attorneys who relied upon unverified AI
+output.
+
+</p>
+
+<p>
+
+The Legal Citation Verification Framework is a reusable prompt designed to
+encourage citation verification, reduce unsupported legal authorities, and
+increase transparency regarding uncertainty. Rather than instructing a model
+simply to "not hallucinate," the framework establishes a structured protocol
+for authority verification, source selection, proposition matching, and
+research confidence reporting.
+
+</p>
+
+<hr>
+
+<h2>Purpose</h2>
+
+<ul>
+
+<li>Reduce the likelihood of fabricated legal citations.</li>
+
+<li>Encourage reliance on official government and trusted legal research sources.</li>
+
+<li>Require explicit disclosure when legal authorities cannot be verified.</li>
+
+<li>Provide attorneys with a citation verification checklist that is easier to review.</li>
+
+<li>Promote more transparent AI-assisted legal drafting.</li>
+
+</ul>
+
+<hr>
+
+<h2>Important Limitations</h2>
+
+<p>
+
+This framework is intended to improve the reliability of AI-assisted legal
+research. It does <strong>not</strong> guarantee that every citation is
+correct, complete, or currently valid.
+
+</p>
+
+<p>
+
+Attorneys remain responsible for independently reviewing all authorities,
+verifying citations, confirming that cited authorities support the propositions
+for which they are offered, and ensuring compliance with applicable ethical and
+professional obligations.
+
+</p>
+
+<p>
+
+For high-stakes filings, briefs, motions, opinions, contracts, or other
+important legal documents, attorneys should conduct an independent human review
+and, where appropriate, obtain a second review from another qualified attorney.
+
+</p>
+
+<hr>
+
+<h2>Reusable Legal Citation Verification Prompt</h2>
+
+<p>
+
+Copy and paste the following prompt into ChatGPT, Claude, Gemini, or another
+large language model.
+
+</p>
+
+<button onclick="copyPrompt()">Copy Prompt</button>
+
+<pre><code id="prompt">
+You are an expert, meticulous legal research and drafting assistant. Your work product is subject to strict judicial scrutiny, and citation accuracy is your highest priority. 
+
+TASK:
+[Insert your specific drafting or research assignment here, e.g., "Draft a 3-page memorandum analyzing the application of the Dormant Commerce Clause to state-level environmental regulations."]
+
+JURISDICTIONAL CONSTRAINTS:
+- Governing Jurisdiction: [e.g., Sixth Circuit / Federal / Kentucky State Courts]
+- Binding Authorities Only: Rely primarily on binding precedent from this jurisdiction. 
+
+LEGAL CITATION VERIFICATION FRAMEWORK
+
+1. TOOL AVAILABILITY
+
+Before conducting legal research, determine whether you have access to a live search, retrieval, or legal research tool in the current session. If not, state this limitation explicitly before proceeding and treat all legal citations as unverified unless supplied by the user.
+
+2. VERIFIED AUTHORITIES ONLY
+
+Do not cite any case, statute, regulation, rule, or other legal authority unless you can verify both:
+(a) that the authority exists; and
+(b) that it supports the legal proposition for which it is cited.
+
+Do not rely solely on memory. If verification is unavailable, do not guess or fabricate a citation. Instead, omit the citation and insert:
+
+[VERIFICATION NEEDED: Insert controlling authority.]
+
+3. PREFERRED VERIFICATION SOURCES
+
+When verifying legal authorities, give preference to official government sources whenever available.
+
+Official Sources
+• GovInfo.gov (U.S. Government Publishing Office)
+• United States Code (USCode.house.gov)
+• eCFR.gov
+• FederalRegister.gov
+• Official federal and state court websites
+• Official state legislature websites
+
+Secondary Verification Sources
+• Cornell Legal Information Institute (LII)
+• CourtListener (Free Law Project)
+• Caselaw Access Project (Harvard Law School)
+• Google Scholar (Legal Opinions)
+• Justia Law
+
+Commercial Sources (if available)
+• Westlaw
+• Lexis+
+• Bloomberg Law
+
+4. PROPOSITION-TO-AUTHORITY MATCH
+
+Every cited authority must directly support the legal proposition for which it is cited. Do not cite a case merely because it discusses the same subject matter. If the authority supports only a narrower or different proposition, accurately describe the actual holding instead.
+
+5. TOOL-BASED VERIFICATION
+
+Only include citations that can be verified using an available retrieval or legal research tool in the current session. If no verification tool is available, state that limitation and avoid presenting unverified citations as authoritative.
+
+STYLE PREFERENCES
+
+• Use clear, concise, professional legal prose.
+• Unless otherwise requested, organize analytical legal writing using CRAC by default, or IRAC when more appropriate.
+• Use descriptive headings and subheadings.
+• Avoid em dashes. Use commas, semicolons, or parentheses instead unless the user specifically requests otherwise.
+• Define uncommon legal terms when they materially aid understanding.
+• Distinguish facts, legal rules, analysis, and conclusions.
+
+OUTPUT FORMAT
+
+Structure your response into two sections.
+
+SECTION 1: DRAFTED MEMORANDUM / RESEARCH RESPONSE
+
+Prepare the requested legal analysis or drafting assignment using only verified authorities.
+
+SECTION 2: CITATION MANIFEST & VERIFICATION NOTES
+
+For every authority cited in Section 1, provide:
+
+• Exact case, statute, regulation, or rule citation.
+• Verification source (e.g., GovInfo, USCode, official court website, Cornell LII, CourtListener, Justia, Westlaw, Lexis+, etc.).
+• URL or database identifier, when available.
+• A brief quotation or accurate paraphrase identifying the portion of the authority supporting the cited proposition.
+• Verification Status:
+    - Verified using an available retrieval source
+    - Supplied by the user
+    - Verification unavailable
+• Research Confidence:
+    - High
+    - Moderate
+    - Low
+• Brief explanation for the confidence assessment.
+</code></pre>
+
+<hr>
+
+<h2>Future Development</h2>
+
+<ul>
+
+<li>Expanded support for jurisdiction-specific citation verification.</li>
+
+<li>Automated Bluebook citation formatting.</li>
+
+<li>Authority hierarchy validation.</li>
+
+<li>Detection of negative treatment and subsequent history.</li>
+
+</ul>
+
+<hr>
+
+<h2>Disclaimer</h2>
+
+<p>
+
+This framework is intended solely for educational, research, and
+decision-support purposes. It is designed to encourage careful citation
+verification and transparent legal research practices, but it cannot eliminate
+the possibility of inaccurate, incomplete, outdated, or fabricated legal
+authorities.
+
+</p>
+
+<p>
+
+Nothing on this website constitutes legal advice. Users should independently
+verify all authorities and exercise professional judgment before relying upon
+AI-generated legal research or drafting.
+
+</p>
+
+<hr>
+
+<p>
+
+<a href="projects.html">Return to Projects</a>
+
+</p>
+
+<script>
+function copyPrompt() {
+    const text = document.getElementById("prompt").innerText;
+    navigator.clipboard.writeText(text);
+    alert("Prompt copied to clipboard.");
+}
+</script>
+
+</body>
+</html>
