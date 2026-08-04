@@ -117,3 +117,45 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+/* Dark Theme */
+
+body.dark-mode {
+    background: #121212;
+    color: #e6e6e6;
+}
+
+body.dark-mode a {
+    color: #7fbfff;
+}
+
+body.dark-mode h2 {
+    border-bottom: 1px solid #555;
+}
+
+body.dark-mode hr {
+    border-color: #555;
+}
+
+body.dark-mode pre {
+    background: #222;
+    border: 1px solid #555;
+    color: #f4f4f4;
+}
+
+body.dark-mode .profile {
+    border: 1px solid #777;
+}
+
+/* Toggle Button */
+
+#themeToggle {
+
+    margin-left: 20px;
+    padding: 6px 12px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+}

@@ -18,6 +18,10 @@
 <a href="index.html">Home</a> |
 <a href="about.html">About</a> |
 <a href="projects.html">Projects</a>
+&nbsp;&nbsp;
+
+<button id="themeToggle">🌙 Dark Mode</button>
+
 </nav>
 
 <hr>
@@ -118,7 +122,9 @@ large language model.
 
 </p>
 
-<button onclick="copyPrompt()">Copy Prompt</button>
+<button onclick="copyPrompt('prompt')">
+Copy Prompt
+</button>
 
 <pre><code id="prompt">
 You are an expert, meticulous legal research and drafting assistant. Your work product is subject to strict judicial scrutiny, and citation accuracy is your highest priority. 
@@ -209,6 +215,8 @@ Authority Level
 • Intermediate Appellate Court
 • Trial Court
 
+When a federal court opinion addresses a question of state substantive law, treat the state's own courts as controlling on that point regardless of the federal court's institutional rank.
+
 7. TOOL-BASED VERIFICATION
 
 Only include citations that can be verified using an available retrieval or legal research tool in the current session. If no verification tool is available, state that limitation and avoid presenting unverified citations as authoritative.
@@ -291,13 +299,7 @@ AI-generated legal research or drafting.
 
 </p>
 
-<script>
-function copyPrompt() {
-    const text = document.getElementById("prompt").innerText;
-    navigator.clipboard.writeText(text);
-    alert("Prompt copied to clipboard.");
-}
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>

@@ -24,6 +24,9 @@ Part of the Adaptive Litigation Valuation Framework.
 <a href="index.html">Home</a> |
 <a href="about.html">About</a> |
 <a href="projects.html">Projects</a>
+&nbsp;&nbsp;
+
+<button id="themeToggle">🌙 Dark Mode</button>
 
 </nav>
 
@@ -113,7 +116,7 @@ large language model.
 
 </p>
 
-<button onclick="copyPrompt()">
+<button onclick="copyPrompt('tier1Prompt')">
 Copy Prompt
 </button>
 
@@ -232,20 +235,7 @@ practice.
 
 </p>
 
-<script>
-
-function copyPrompt() {
-
-    const prompt =
-        document.getElementById("tier1Prompt").innerText;
-
-    navigator.clipboard.writeText(prompt)
-        .then(() => alert("Prompt copied to clipboard!"))
-        .catch(() => alert("Unable to copy prompt."));
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 

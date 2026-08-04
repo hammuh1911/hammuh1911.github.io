@@ -24,6 +24,9 @@ Part of the Adaptive Litigation Valuation Framework.
 <a href="index.html">Home</a> |
 <a href="about.html">About</a> |
 <a href="projects.html">Projects</a>
+&nbsp;&nbsp;
+
+<button id="themeToggle">🌙 Dark Mode</button>
 
 </nav>
 
@@ -245,10 +248,8 @@ large language model.
 
 </p>
 
-<button onclick="copyPrompt()">
-
+<button onclick="copyPrompt('tier2Prompt')">
 Copy Prompt
-
 </button>
 
 <pre><code id="tier2Prompt">You are an expert legal risk analyst and litigation strategist. Your task is to process a civil litigation case using the Tier 2 (Intermediate) Litigation Model and generate a structured valuation report.
@@ -426,19 +427,7 @@ practice.
 
 </p>
 
-<script>
-
-function copyPrompt() {
-
-    const prompt = document.getElementById("tier2Prompt").innerText;
-
-    navigator.clipboard.writeText(prompt)
-        .then(() => alert("Prompt copied to clipboard!"))
-        .catch(() => alert("Unable to copy prompt."));
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 
