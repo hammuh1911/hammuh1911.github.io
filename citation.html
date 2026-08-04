@@ -4,13 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legal Citation Verification Framework</title>
+<title>Verified Legal Research Protocol</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<h1>Legal Citation Verification Framework</h1>
+<h1>Verified Legal Research Protocol</h1>
+
+<p><strong>Version:</strong> 1.0 (August 2026)</p>
 
 <nav>
 <a href="index.html">Home</a> |
@@ -35,12 +37,26 @@ output.
 
 <p>
 
-The Legal Citation Verification Framework is a reusable prompt designed to
+The Verified Legal Research Protocol is a reusable prompt designed to
 encourage citation verification, reduce unsupported legal authorities, and
 increase transparency regarding uncertainty. Rather than instructing a model
 simply to "not hallucinate," the framework establishes a structured protocol
 for authority verification, source selection, proposition matching, and
 research confidence reporting.
+
+</p>
+
+<hr>
+
+<h2>Recommended Use</h2>
+
+<p>
+
+This protocol is most effective when used with an AI system that has access to
+live web search, retrieval tools, or commercial legal research databases.
+Without retrieval capabilities, the protocol encourages the model to disclose
+uncertainty rather than fabricate citations, but it cannot independently verify
+legal authorities.
 
 </p>
 
@@ -93,7 +109,7 @@ and, where appropriate, obtain a second review from another qualified attorney.
 
 <hr>
 
-<h2>Reusable Legal Citation Verification Prompt</h2>
+<h2>Reusable Verified Legal Research Protocol Prompt</h2>
 
 <p>
 
@@ -112,15 +128,16 @@ TASK:
 
 JURISDICTIONAL CONSTRAINTS:
 - Governing Jurisdiction: [e.g., Sixth Circuit / Federal / Kentucky State Courts]
-- Binding Authorities Only: Rely primarily on binding precedent from this jurisdiction. 
+- Binding Authorities Only:
+Rely primarily on binding authority from the governing jurisdiction. If no binding authority exists, clearly identify persuasive authority as persuasive rather than binding.
 
-LEGAL CITATION VERIFICATION FRAMEWORK
+LEGAL RESEARCH PROTOCOL
 
 1. TOOL AVAILABILITY
 
-Before conducting legal research, determine whether you have access to a live search, retrieval, or legal research tool in the current session. If not, state this limitation explicitly before proceeding and treat all legal citations as unverified unless supplied by the user.
+Before conducting research, explicitly state whether live retrieval, web search, commercial legal databases, or user-provided materials are available in the current session.
 
-2. VERIFIED AUTHORITIES ONLY
+2. AUTHENTICITY OF AUTHORITIES
 
 Do not cite any case, statute, regulation, rule, or other legal authority unless you can verify both:
 (a) that the authority exists; and
@@ -154,16 +171,52 @@ Commercial Sources (if available)
 • Lexis+
 • Bloomberg Law
 
+If a commercial citator tool is available in this session, use it for the good-law check in Rule 5 in preference to inferring validity from free-source search results.
+
 4. PROPOSITION-TO-AUTHORITY MATCH
 
-Every cited authority must directly support the legal proposition for which it is cited. Do not cite a case merely because it discusses the same subject matter. If the authority supports only a narrower or different proposition, accurately describe the actual holding instead.
+Every cited authority must directly support the legal proposition for which it is cited.
 
-5. TOOL-BASED VERIFICATION
+Do not cite a case merely because it discusses the same subject matter.
+
+If the authority supports only a narrower proposition, accurately state that narrower proposition.
+
+Do not overstate the holding.
+
+5. PRECEDENTIAL VITALITY & CITATOR REVIEW (GOOD LAW REQUIREMENT)
+
+Every cited authority must be current, valid, and controlling law for the specific proposition cited.
+(a) Active Precedent Check: Do not cite any case, statute, or rule that has been overruled, reversed, vacated, or abrogated by subsequent judicial decision, statutory amendment, or rule revision.
+(b) Pinpoint Validity: Verify that the specific point of law cited remains good law, even if the overall case remains valid on other grounds.
+(c) Flagging Superseded Authority: If an authority supports the proposition but its precedential vitality is questionable, superseded, or abrogated (e.g., modified by statute like KRS 411.182 or revised court rules like the RAP), flag the citation explicitly using:
+    [CITATOR WARNING: Precedential vitality unverified or authority may no longer be good law.]
+    and provide an active, controlling alternative if available.
+
+For statutes and regulations, verify that the cited version is currently in force unless the user specifically requests historical law.
+
+If a cited authority has received negative treatment that does not invalidate the cited proposition, briefly identify the nature of that treatment.
+
+6. AUTHORITY HIERARCHY
+
+When multiple authorities address the same proposition, cite the highest-ranking controlling authority available. Avoid relying on lower court opinions, secondary authorities, or persuasive decisions when controlling authority exists.
+
+Authority Level
+
+• U.S. Supreme Court
+• Federal Court of Appeals
+• Federal District Court
+• State Supreme Court
+• Intermediate Appellate Court
+• Trial Court
+
+7. TOOL-BASED VERIFICATION
 
 Only include citations that can be verified using an available retrieval or legal research tool in the current session. If no verification tool is available, state that limitation and avoid presenting unverified citations as authoritative.
 
 STYLE PREFERENCES
 
+• Citation Style:
+Unless otherwise requested, conform to the current edition of The Bluebook or the governing jurisdiction's official citation rules.
 • Use clear, concise, professional legal prose.
 • Unless otherwise requested, organize analytical legal writing using CRAC by default, or IRAC when more appropriate.
 • Use descriptive headings and subheadings.
@@ -181,21 +234,15 @@ Prepare the requested legal analysis or drafting assignment using only verified 
 
 SECTION 2: CITATION MANIFEST & VERIFICATION NOTES
 
-For every authority cited in Section 1, provide:
+For every authority cited:
 
-• Exact case, statute, regulation, or rule citation.
-• Verification source (e.g., GovInfo, USCode, official court website, Cornell LII, CourtListener, Justia, Westlaw, Lexis+, etc.).
-• URL or database identifier, when available.
-• A brief quotation or accurate paraphrase identifying the portion of the authority supporting the cited proposition.
-• Verification Status:
-    - Verified using an available retrieval source
-    - Supplied by the user
-    - Verification unavailable
-• Research Confidence:
-    - High
-    - Moderate
-    - Low
-• Brief explanation for the confidence assessment.
+• Exact citation
+• Verification source
+• URL
+• Supporting quotation or paraphrase
+• Verification status
+• Precedential status
+• Research confidence
 </code></pre>
 
 <hr>
@@ -210,7 +257,7 @@ For every authority cited in Section 1, provide:
 
 <li>Authority hierarchy validation.</li>
 
-<li>Detection of negative treatment and subsequent history.</li>
+<li>Automated citator review (Shepard's®, KeyCite®, and equivalent services when available)</li>
 
 </ul>
 
