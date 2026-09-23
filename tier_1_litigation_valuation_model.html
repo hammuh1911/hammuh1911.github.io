@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tier 1 Litigation Expected Value Visualizer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                        },
+                        emerald: {
+                            500: '#10b981',
+                            600: '#059669',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom styled range sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease, background-color 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: #1d4ed8;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 9999px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #334155;
+        }
+
+        /* Tooltip animation */
+        .tooltip-box {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        /* Smooth tab transitions */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full transition-colors duration-200">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-scale-balanced text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-900 dark:text-white leading-tight">
+                        Tier 1 Litigation Expected Value Model
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Adaptive Litigation Valuation Framework • Version 1.0
+                    </p>
+                </div>
+            </div>
+
+            <!-- Header Action Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button id="view-mode-btn" onclick="toggleViewMode()" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+                    <i class="fa-solid fa-columns mr-1.5"></i>
+                    <span id="view-mode-label">Side-by-Side Comparison</span>
+                </button>
+                <button id="theme-toggle" onclick="toggleTheme()" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Banner / System Description -->
+        <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 rounded-xl p-4 sm:p-5 text-sm text-blue-900 dark:text-blue-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <p class="font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-600 dark:text-blue-400"></i>
+                    Rapid Civil Case Preliminary Valuation
+                </p>
+                <p class="text-xs text-blue-700 dark:text-blue-300 max-w-3xl">
+                    Adjust key scenario variables below to observe how the Plaintiff Floor (EV<sub>Plaintiff</sub>) and Defense Ceiling (EV<sub>Defendant</sub>) dynamically construct the Zone of Possible Agreement (ZOPA).
+                </p>
+            </div>
+            <div class="flex items-center space-x-2 shrink-0">
+                <button onclick="loadPreset('example')" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 border border-blue-300 dark:border-slate-600 text-blue-800 dark:text-blue-200 rounded-lg text-xs font-medium transition">
+                    Standard Case
+                </button>
+                <button onclick="loadPreset('high_cost')" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 border border-blue-300 dark:border-slate-600 text-blue-800 dark:text-blue-200 rounded-lg text-xs font-medium transition">
+                    High Defense Friction
+                </button>
+                <button onclick="loadPreset('capped')" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 border border-blue-300 dark:border-slate-600 text-blue-800 dark:text-blue-200 rounded-lg text-xs font-medium transition">
+                    Policy Cap Constrained
+                </button>
+            </div>
+        </div>
+
+        <!-- SINGLE SCENARIO VIEW -->
+        <div id="single-scenario-view" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Controls Column (4 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h2 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-blue-600 dark:text-blue-400"></i>
+                            Key Input Variables
+                        </h2>
+                        <button onclick="resetInputs('A')" class="text-xs text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+
+                    <!-- Variable 1: Gross Expected Damages (D) -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label for="damages-A" class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                Gross Expected Damages (D)
+                                <i class="fa-regular fa-circle-question text-slate-400 text-xs" title="Total gross monetary damages estimated if plaintiff prevails."></i>
+                            </label>
+                            <div class="relative rounded-md shadow-sm">
+                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-400 text-xs">$</span>
+                                <input type="number" id="damages-input-A" min="0" max="2000000" step="5000" value="100000" oninput="syncFromInput('damages', 'A')" class="w-28 pl-6 pr-2 py-1 text-right text-xs font-mono rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <input type="range" id="damages-range-A" min="5000" max="1000000" step="5000" value="100000" oninput="syncFromSlider('damages', 'A')">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                            <span>$5,000</span>
+                            <span>$500,000</span>
+                            <span>$1,000,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Variable 2: Win Probability (P_win) -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label for="pwin-A" class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                Win Probability (P<sub>win</sub>)
+                                <i class="fa-regular fa-circle-question text-slate-400 text-xs" title="Estimated net probability of establishing liability and proving damages."></i>
+                            </label>
+                            <div class="relative rounded-md shadow-sm">
+                                <input type="number" id="pwin-input-A" min="0" max="100" step="1" value="60" oninput="syncFromInput('pwin', 'A')" class="w-20 pr-5 pl-2 py-1 text-right text-xs font-mono rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500">
+                                <span class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 text-xs">%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="pwin-range-A" min="0" max="100" step="1" value="60" oninput="syncFromSlider('pwin', 'A')">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                            <span>0%</span>
+                            <span>50%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <!-- Variable 3: Defense Trial Costs (C_D) -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label for="cd-A" class="text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                Defense Trial Costs (C<sub>D</sub>)
+                                <i class="fa-regular fa-circle-question text-slate-400 text-xs" title="Estimated total defense litigation expenses through trial."></i>
+                            </label>
+                            <div class="relative rounded-md shadow-sm">
+                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-400 text-xs">$</span>
+                                <input type="number" id="cd-input-A" min="0" max="500000" step="1000" value="15000" oninput="syncFromInput('cd', 'A')" class="w-28 pl-6 pr-2 py-1 text-right text-xs font-mono rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <input type="range" id="cd-range-A" min="0" max="250000" step="1000" value="15000" oninput="syncFromSlider('cd', 'A')">
+                        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                            <span>$0</span>
+                            <span>$125,000</span>
+                            <span>$250,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Policy Limit Cap (L) Toggle & Control -->
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                                <i class="fa-solid fa-shield-halved text-amber-500"></i>
+                                Policy Limit / Asset Cap (L)
+                            </span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="policy-toggle-A" class="sr-only peer" onchange="togglePolicyLimit('A')">
+                                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div id="policy-input-container-A" class="hidden space-y-2 pl-2 border-l-2 border-amber-400">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500">Coverage Limit</span>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-2 flex items-center text-slate-400 text-xs">$</span>
+                                    <input type="number" id="policy-input-A" min="10000" max="2000000" step="10000" value="100000" oninput="syncFromInput('policy', 'A')" class="w-28 pl-6 pr-2 py-1 text-right text-xs font-mono rounded-md border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold">
+                                </div>
+                            </div>
+                            <input type="range" id="policy-range-A" min="10000" max="500000" step="5000" value="100000" oninput="syncFromSlider('policy', 'A')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Visualization & Metrics Column (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium block mb-1">Plaintiff Floor (EV<sub>P</sub>)</span>
+                        <div id="plaintiff-floor-A" class="text-xl sm:text-2xl font-bold font-mono text-blue-600 dark:text-blue-400">
+                            $60,000
+                        </div>
+                        <span class="text-[10px] text-slate-400 block mt-1 font-mono">P<sub>win</sub> × D</span>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium block mb-1">Defense Ceiling (EV<sub>D</sub>)</span>
+                        <div id="defense-ceiling-A" class="text-xl sm:text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                            $75,000
+                        </div>
+                        <span id="defense-sub-A" class="text-[10px] text-slate-400 block mt-1 font-mono">EV<sub>P</sub> + C<sub>D</sub></span>
+                    </div>
+
+                    <div class="col-span-2 sm:col-span-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium block mb-1">ZOPA Bargaining Width</span>
+                        <div id="zopa-width-A" class="text-xl sm:text-2xl font-bold font-mono text-slate-800 dark:text-slate-100">
+                            $15,000
+                        </div>
+                        <span class="text-[10px] text-slate-400 block mt-1">Defense Cost Premium</span>
+                    </div>
+                </div>
+
+                <!-- Live ZOPA Visualizer Canvas / Bar -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-sm sm:text-base">
+                            <i class="fa-solid fa-chart-line text-blue-600 dark:text-blue-400"></i>
+                            Target Settlement Corridor (ZOPA)
+                        </h3>
+                        <span id="zopa-status-badge-A" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                            Positive Settlement Zone
+                        </span>
+                    </div>
+
+                    <!-- Interactive Range Graphic Container -->
+                    <div class="py-6 px-2 sm:px-4 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-100 dark:border-slate-800/80 relative">
+
+                        <!-- Value Labels Axis Top -->
+                        <div class="flex justify-between text-xs font-mono text-slate-400 mb-2">
+                            <span>$0</span>
+                            <span id="axis-mid-A">$100,000</span>
+                            <span id="axis-max-A">$200,000</span>
+                        </div>
+
+                        <!-- Range Bar Background Track -->
+                        <div class="h-10 w-full bg-slate-200 dark:bg-slate-800 rounded-lg relative overflow-hidden shadow-inner flex items-center">
+                            
+                            <!-- ZOPA Highlighted Fill Corridor -->
+                            <div id="zopa-bar-A" class="h-full bg-gradient-to-r from-blue-500/80 via-indigo-500/80 to-emerald-500/80 absolute transition-all duration-200 border-x-2 border-slate-900 dark:border-white shadow-md" style="left: 30%; width: 7.5%;">
+                                <div class="w-full h-full flex items-center justify-center text-[11px] font-bold text-white tracking-wider font-mono opacity-90 truncate px-1">
+                                    ZOPA
+                                </div>
+                            </div>
+
+                            <!-- Policy Limit Line Marker (if active) -->
+                            <div id="policy-marker-A" class="absolute top-0 bottom-0 w-1 bg-amber-500 z-10 hidden shadow-lg" style="left: 50%;">
+                                <div class="absolute -top-5 -translate-x-1/2 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 px-1 rounded border border-amber-300">
+                                    Cap $L
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pins & Markers Below Bar -->
+                        <div class="relative h-14 mt-2">
+                            <!-- Plaintiff Floor Pin -->
+                            <div id="pin-floor-A" class="absolute -translate-x-1/2 flex flex-col items-center transition-all duration-200" style="left: 30%;">
+                                <div class="w-0.5 h-3 bg-blue-600 dark:bg-blue-400"></div>
+                                <div class="bg-blue-600 text-white text-[11px] font-semibold px-2 py-0.5 rounded shadow font-mono text-center whitespace-nowrap">
+                                    Floor: <span id="pin-floor-val-A">$60k</span>
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-medium">Plaintiff EV</span>
+                            </div>
+
+                            <!-- Defense Ceiling Pin -->
+                            <div id="pin-ceiling-A" class="absolute -translate-x-1/2 flex flex-col items-center transition-all duration-200" style="left: 37.5%;">
+                                <div class="w-0.5 h-3 bg-emerald-600 dark:bg-emerald-400"></div>
+                                <div class="bg-emerald-600 text-white text-[11px] font-semibold px-2 py-0.5 rounded shadow font-mono text-center whitespace-nowrap">
+                                    Ceiling: <span id="pin-ceiling-val-A">$75k</span>
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-medium">Defense Outlay</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend & Explanatory Cues -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
+                        <div class="flex items-start space-x-2 text-slate-600 dark:text-slate-300">
+                            <span class="w-3 h-3 rounded-full bg-blue-500 shrink-0 mt-0.5"></span>
+                            <div>
+                                <strong>Plaintiff Floor (P<sub>win</sub> × D):</strong> Minimum rational settlement acceptance threshold.
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-2 text-slate-600 dark:text-slate-300">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 shrink-0 mt-0.5"></span>
+                            <div>
+                                <strong>Defense Ceiling ((P<sub>win</sub> × D) + C<sub>D</sub>):</strong> Maximum rational defense settlement outlay.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Insights Callout -->
+                <div class="bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-xs space-y-2">
+                    <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-sm">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                        Strategic Takeaway
+                    </h4>
+                    <p id="strategic-narrative-A" class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Loading evaluation notes...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARISON MODE VIEW (HIDDEN BY DEFAULT) -->
+        <div id="comparison-view" class="hidden space-y-6">
+
+            <div class="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                <div>
+                    <h2 class="font-bold text-slate-900 dark:text-white text-base">Side-by-Side Scenario Analysis</h2>
+                    <p class="text-xs text-slate-500">Compare different litigation risk assumptions side by side to evaluate bargaining leverage.</p>
+                </div>
+                <button onclick="toggleViewMode()" class="px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Single View
+                </button>
+            </div>
+
+            <!-- Two Columns for Scenario A & Scenario B -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- SCENARIO A -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-5">
+                    <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <span class="font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs flex items-center justify-center font-bold">A</span>
+                            Scenario A (Baseline)
+                        </span>
+                        <button onclick="copyScenarioAToB()" class="text-xs text-slate-500 hover:text-blue-600 transition">
+                            Copy to B <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+
+                    <!-- Input Controls A Compact -->
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Gross Damages (D)</span>
+                                <span id="comp-damages-val-A" class="font-mono text-blue-600 dark:text-blue-400">$100,000</span>
+                            </div>
+                            <input type="range" id="damages-range-comp-A" min="5000" max="1000000" step="5000" value="100000" oninput="syncFromCompSlider('damages', 'A')">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Win Probability (P<sub>win</sub>)</span>
+                                <span id="comp-pwin-val-A" class="font-mono text-blue-600 dark:text-blue-400">60%</span>
+                            </div>
+                            <input type="range" id="pwin-range-comp-A" min="0" max="100" step="1" value="60" oninput="syncFromCompSlider('pwin', 'A')">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Defense Costs (C<sub>D</sub>)</span>
+                                <span id="comp-cd-val-A" class="font-mono text-blue-600 dark:text-blue-400">$15,000</span>
+                            </div>
+                            <input type="range" id="cd-range-comp-A" min="0" max="250000" step="1000" value="15000" oninput="syncFromCompSlider('cd', 'A')">
+                        </div>
+                    </div>
+
+                    <!-- Summary Box A -->
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg space-y-2 font-mono text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Plaintiff Floor:</span>
+                            <span id="comp-floor-A" class="font-bold text-blue-600 dark:text-blue-400">$60,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Defense Ceiling:</span>
+                            <span id="comp-ceiling-A" class="font-bold text-emerald-600 dark:text-emerald-400">$75,000</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-1.5">
+                            <span class="text-slate-700 dark:text-slate-300 font-sans font-semibold">ZOPA Range:</span>
+                            <span id="comp-zopa-A" class="font-bold text-slate-900 dark:text-white">$60,000 – $75,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENARIO B -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-5">
+                    <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <span class="font-bold text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs flex items-center justify-center font-bold">B</span>
+                            Scenario B (Alternative)
+                        </span>
+                        <button onclick="resetInputs('B')" class="text-xs text-slate-500 hover:text-purple-600 transition">
+                            <i class="fa-solid fa-rotate-left"></i> Reset B
+                        </button>
+                    </div>
+
+                    <!-- Input Controls B Compact -->
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Gross Damages (D)</span>
+                                <span id="comp-damages-val-B" class="font-mono text-purple-600 dark:text-purple-400">$100,000</span>
+                            </div>
+                            <input type="range" id="damages-range-comp-B" min="5000" max="1000000" step="5000" value="100000" oninput="syncFromCompSlider('damages', 'B')">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Win Probability (P<sub>win</sub>)</span>
+                                <span id="comp-pwin-val-B" class="font-mono text-purple-600 dark:text-purple-400">40%</span>
+                            </div>
+                            <input type="range" id="pwin-range-comp-B" min="0" max="100" step="1" value="40" oninput="syncFromCompSlider('pwin', 'B')">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between font-medium mb-1">
+                                <span>Defense Costs (C<sub>D</sub>)</span>
+                                <span id="comp-cd-val-B" class="font-mono text-purple-600 dark:text-purple-400">$30,000</span>
+                            </div>
+                            <input type="range" id="cd-range-comp-B" min="0" max="250000" step="1000" value="30000" oninput="syncFromCompSlider('cd', 'B')">
+                        </div>
+                    </div>
+
+                    <!-- Summary Box B -->
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg space-y-2 font-mono text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Plaintiff Floor:</span>
+                            <span id="comp-floor-B" class="font-bold text-purple-600 dark:text-purple-400">$40,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Defense Ceiling:</span>
+                            <span id="comp-ceiling-B" class="font-bold text-emerald-600 dark:text-emerald-400">$70,000</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-1.5">
+                            <span class="text-slate-700 dark:text-slate-300 font-sans font-semibold">ZOPA Range:</span>
+                            <span id="comp-zopa-B" class="font-bold text-slate-900 dark:text-white">$40,000 – $70,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparative ZOPA Visual Alignment -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 dark:text-white text-sm">ZOPA Corridor Visual Shift</h3>
+                
+                <div class="space-y-4 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <!-- Scenario A Bar -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold text-blue-600 dark:text-blue-400">
+                            <span>Scenario A</span>
+                            <span id="comp-bar-label-A" class="font-mono">$60k - $75k</span>
+                        </div>
+                        <div class="h-6 w-full bg-slate-200 dark:bg-slate-800 rounded relative overflow-hidden">
+                            <div id="comp-bar-fill-A" class="h-full bg-blue-500/80 absolute rounded border-x border-slate-900 dark:border-white" style="left: 30%; width: 7.5%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Scenario B Bar -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold text-purple-600 dark:text-purple-400">
+                            <span>Scenario B</span>
+                            <span id="comp-bar-label-B" class="font-mono">$40k - $70k</span>
+                        </div>
+                        <div class="h-6 w-full bg-slate-200 dark:bg-slate-800 rounded relative overflow-hidden">
+                            <div id="comp-bar-fill-B" class="h-full bg-purple-500/80 absolute rounded border-x border-slate-900 dark:border-white" style="left: 20%; width: 15%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT & LLM SYSTEM PROMPT GENERATOR SECTION -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-file-contract text-blue-600 dark:text-blue-400"></i>
+                        Valuation Summary & System Prompt
+                    </h3>
+                    <p class="text-xs text-slate-500">Export structured data or copy Tier 1 prompts for ChatGPT/Claude legal analysis.</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="copyValuationSummary()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-regular fa-copy"></i> Copy Summary
+                    </button>
+                    <button onclick="copySystemPrompt()" class="px-3 py-1.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-code"></i> Copy AI Prompt
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Output Textarea -->
+            <textarea id="output-summary-text" readonly rows="6" class="w-full font-mono text-xs p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none resize-none"></textarea>
+        </div>
+
+    </main>
+
+    <!-- Custom Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <i class="fa-solid fa-check-circle text-emerald-400"></i>
+        <span id="toast-msg">Copied to clipboard!</span>
+    </div>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Global Application State
+        const state = {
+            theme: 'light',
+            viewMode: 'single', // 'single' or 'comparison'
+            scenarioA: {
+                damages: 100000,
+                pwin: 60,
+                cd: 15000,
+                policyEnabled: false,
+                policy: 100000
+            },
+            scenarioB: {
+                damages: 100000,
+                pwin: 40,
+                cd: 30000,
+                policyEnabled: false,
+                policy: 100000
+            }
+        };
+
+        function calculateValuation(s) {
+            const evPlaintiff = (s.pwin / 100) * s.damages;
+            let evDefendantUncapped = evPlaintiff + s.cd;
+            let evDefendant = evDefendantUncapped;
+            let capApplied = false;
+
+            if (s.policyEnabled && s.policy > 0) {
+                if (evDefendantUncapped > s.policy) {
+                    evDefendant = Math.min(evDefendantUncapped, s.policy);
+                    capApplied = true;
+                }
+            }
+
+            const zopaMin = evPlaintiff;
+            const zopaMax = Math.max(evPlaintiff, evDefendant);
+            const zopaSpread = zopaMax - zopaMin;
+
+            return {
+                damages: s.damages,
+                pwin: s.pwin,
+                cd: s.cd,
+                evPlaintiff: evPlaintiff,
+                evDefendant: evDefendant,
+                evDefendantUncapped: evDefendantUncapped,
+                zopaMin: zopaMin,
+                zopaMax: zopaMax,
+                zopaSpread: zopaSpread,
+                capApplied: capApplied,
+                policyLimit: s.policyEnabled ? s.policy : null
+            };
+        }
+
+        function formatCurrency(val) {
+            return '$' + Math.round(val).toLocaleString('en-US');
+        }
+
+        function formatK(val) {
+            if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+            if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'k';
+            return '$' + val;
+        }
+
+        function updateUI() {
+            const valA = calculateValuation(state.scenarioA);
+            const valB = calculateValuation(state.scenarioB);
+
+            // Update Scenario A Single View Numbers
+            document.getElementById('plaintiff-floor-A').innerText = formatCurrency(valA.evPlaintiff);
+            document.getElementById('defense-ceiling-A').innerText = formatCurrency(valA.evDefendant);
+            document.getElementById('zopa-width-A').innerText = formatCurrency(valA.zopaSpread);
+
+            if (valA.capApplied) {
+                document.getElementById('defense-sub-A').innerText = `Capped at Policy Limit ($${valA.policyLimit.toLocaleString()})`;
+            } else {
+                document.getElementById('defense-sub-A').innerText = `$EV_P + C_D`;
+            }
+
+            // Update ZOPA Graphic Scale Range
+            // Axis dynamic range max = max(damages * 1.2, evDefendant * 1.3)
+            const axisMax = Math.max(state.scenarioA.damages * 1.25, valA.evDefendant * 1.25, 100000);
+            document.getElementById('axis-mid-A').innerText = formatK(axisMax / 2);
+            document.getElementById('axis-max-A').innerText = formatK(axisMax);
+
+            // Percentage positioning
+            const leftPct = Math.min(100, Math.max(0, (valA.evPlaintiff / axisMax) * 100));
+            const rightPct = Math.min(100, Math.max(0, (valA.evDefendant / axisMax) * 100));
+            const widthPct = Math.max(0, rightPct - leftPct);
+
+            const zopaBar = document.getElementById('zopa-bar-A');
+            zopaBar.style.left = leftPct + '%';
+            zopaBar.style.width = widthPct + '%';
+
+            // Pins
+            const pinFloor = document.getElementById('pin-floor-A');
+            const pinCeiling = document.getElementById('pin-ceiling-A');
+
+            pinFloor.style.left = leftPct + '%';
+            document.getElementById('pin-floor-val-A').innerText = formatK(valA.evPlaintiff);
+
+            pinCeiling.style.left = rightPct + '%';
+            document.getElementById('pin-ceiling-val-A').innerText = formatK(valA.evDefendant);
+
+            // Policy Marker
+            const policyMarker = document.getElementById('policy-marker-A');
+            if (state.scenarioA.policyEnabled) {
+                policyMarker.classList.remove('hidden');
+                const policyPct = Math.min(100, Math.max(0, (state.scenarioA.policy / axisMax) * 100));
+                policyMarker.style.left = policyPct + '%';
+            } else {
+                policyMarker.classList.add('hidden');
+            }
+
+            // Status Badge & Narrative
+            const badge = document.getElementById('zopa-status-badge-A');
+            const narrative = document.getElementById('strategic-narrative-A');
+
+            if (valA.evDefendant < valA.evPlaintiff) {
+                badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
+                badge.innerText = 'Negative Bargaining Zone (Cap Exposure)';
+                narrative.innerText = `Warning: The policy limit (${formatCurrency(valA.policyLimit)}) falls below the plaintiff's expected verdict floor (${formatCurrency(valA.evPlaintiff)}). This indicates bad-faith risk and potential excess judgment exposure if the defense refuses to settle within limits.`;
+            } else {
+                badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
+                badge.innerText = 'Positive Settlement Corridor';
+                narrative.innerText = `The bargaining target (ZOPA) ranges from ${formatCurrency(valA.evPlaintiff)} (Plaintiff Floor) to ${formatCurrency(valA.evDefendant)} (Defense Ceiling). Defense litigation expenses (${formatCurrency(state.scenarioA.cd)}) create a ${formatCurrency(valA.zopaSpread)} buffer, giving the defense rational economic incentive to settle at or near the expected verdict rather than incurring trial costs.`;
+            }
+
+            // Update Side-by-Side Comparison Numbers
+            document.getElementById('comp-damages-val-A').innerText = formatCurrency(state.scenarioA.damages);
+            document.getElementById('comp-pwin-val-A').innerText = state.scenarioA.pwin + '%';
+            document.getElementById('comp-cd-val-A').innerText = formatCurrency(state.scenarioA.cd);
+            document.getElementById('comp-floor-A').innerText = formatCurrency(valA.evPlaintiff);
+            document.getElementById('comp-ceiling-A').innerText = formatCurrency(valA.evDefendant);
+            document.getElementById('comp-zopa-A').innerText = `${formatCurrency(valA.evPlaintiff)} – ${formatCurrency(valA.evDefendant)}`;
+
+            document.getElementById('comp-damages-val-B').innerText = formatCurrency(state.scenarioB.damages);
+            document.getElementById('comp-pwin-val-B').innerText = state.scenarioB.pwin + '%';
+            document.getElementById('comp-cd-val-B').innerText = formatCurrency(state.scenarioB.cd);
+            document.getElementById('comp-floor-B').innerText = formatCurrency(valB.evPlaintiff);
+            document.getElementById('comp-ceiling-B').innerText = formatCurrency(valB.evDefendant);
+            document.getElementById('comp-zopa-B').innerText = `${formatCurrency(valB.evPlaintiff)} – ${formatCurrency(valB.evDefendant)}`;
+
+            // Comparison visual bars
+            const compAxisMax = Math.max(state.scenarioA.damages, state.scenarioB.damages, valA.evDefendant, valB.evDefendant, 100000) * 1.15;
+            
+            const compLeftA = (valA.evPlaintiff / compAxisMax) * 100;
+            const compWidthA = Math.max(1, ((valA.evDefendant - valA.evPlaintiff) / compAxisMax) * 100);
+            document.getElementById('comp-bar-fill-A').style.left = compLeftA + '%';
+            document.getElementById('comp-bar-fill-A').style.width = compWidthA + '%';
+            document.getElementById('comp-bar-label-A').innerText = `${formatK(valA.evPlaintiff)} - ${formatK(valA.evDefendant)}`;
+
+            const compLeftB = (valB.evPlaintiff / compAxisMax) * 100;
+            const compWidthB = Math.max(1, ((valB.evDefendant - valB.evPlaintiff) / compAxisMax) * 100);
+            document.getElementById('comp-bar-fill-B').style.left = compLeftB + '%';
+            document.getElementById('comp-bar-fill-B').style.width = compWidthB + '%';
+            document.getElementById('comp-bar-label-B').innerText = `${formatK(valB.evPlaintiff)} - ${formatK(valB.evDefendant)}`;
+
+            // Generate Output Summary Text
+            updateSummaryText(valA);
+        }
+
+        function syncFromSlider(param, id) {
+            const val = parseFloat(document.getElementById(`${param}-range-${id}`).value);
+            document.getElementById(`${param}-input-${id}`).value = val;
+            
+            if (id === 'A') {
+                state.scenarioA[param] = val;
+                // Also sync comp sliders
+                const compSlider = document.getElementById(`${param}-range-comp-A`);
+                if (compSlider) compSlider.value = val;
+            } else {
+                state.scenarioB[param] = val;
+            }
+            updateUI();
+        }
+
+        function syncFromInput(param, id) {
+            const val = parseFloat(document.getElementById(`${param}-input-${id}`).value) || 0;
+            document.getElementById(`${param}-range-${id}`).value = val;
+
+            if (id === 'A') {
+                state.scenarioA[param] = val;
+                const compSlider = document.getElementById(`${param}-range-comp-A`);
+                if (compSlider) compSlider.value = val;
+            } else {
+                state.scenarioB[param] = val;
+            }
+            updateUI();
+        }
+
+        function syncFromCompSlider(param, id) {
+            const val = parseFloat(document.getElementById(`${param}-range-comp-${id}`).value);
+            if (id === 'A') {
+                state.scenarioA[param] = val;
+                document.getElementById(`${param}-range-A`).value = val;
+                document.getElementById(`${param}-input-A`).value = val;
+            } else {
+                state.scenarioB[param] = val;
+            }
+            updateUI();
+        }
+
+        function togglePolicyLimit(id) {
+            const enabled = document.getElementById(`policy-toggle-${id}`).checked;
+            const container = document.getElementById(`policy-input-container-${id}`);
+            
+            if (enabled) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+
+            if (id === 'A') state.scenarioA.policyEnabled = enabled;
+            else state.scenarioB.policyEnabled = enabled;
+
+            updateUI();
+        }
+
+        function loadPreset(key) {
+            if (key === 'example') {
+                state.scenarioA = { damages: 100000, pwin: 60, cd: 15000, policyEnabled: false, policy: 100000 };
+            } else if (key === 'high_cost') {
+                state.scenarioA = { damages: 250000, pwin: 50, cd: 75000, policyEnabled: false, policy: 250000 };
+            } else if (key === 'capped') {
+                state.scenarioA = { damages: 200000, pwin: 70, cd: 25000, policyEnabled: true, policy: 120000 };
+            }
+
+            // Sync UI inputs
+            document.getElementById('damages-input-A').value = state.scenarioA.damages;
+            document.getElementById('damages-range-A').value = state.scenarioA.damages;
+            document.getElementById('pwin-input-A').value = state.scenarioA.pwin;
+            document.getElementById('pwin-range-A').value = state.scenarioA.pwin;
+            document.getElementById('cd-input-A').value = state.scenarioA.cd;
+            document.getElementById('cd-range-A').value = state.scenarioA.cd;
+            
+            document.getElementById('policy-toggle-A').checked = state.scenarioA.policyEnabled;
+            document.getElementById('policy-input-A').value = state.scenarioA.policy;
+            document.getElementById('policy-range-A').value = state.scenarioA.policy;
+            
+            togglePolicyLimit('A');
+            updateUI();
+        }
+
+        function resetInputs(id) {
+            if (id === 'A') {
+                loadPreset('example');
+            } else {
+                state.scenarioB = { damages: 100000, pwin: 40, cd: 30000, policyEnabled: false, policy: 100000 };
+                document.getElementById('damages-range-comp-B').value = 100000;
+                document.getElementById('pwin-range-comp-B').value = 40;
+                document.getElementById('cd-range-comp-B').value = 30000;
+                updateUI();
+            }
+        }
+
+        function copyScenarioAToB() {
+            state.scenarioB = JSON.parse(JSON.stringify(state.scenarioA));
+            document.getElementById('damages-range-comp-B').value = state.scenarioB.damages;
+            document.getElementById('pwin-range-comp-B').value = state.scenarioB.pwin;
+            document.getElementById('cd-range-comp-B').value = state.scenarioB.cd;
+            updateUI();
+            showToast("Copied Scenario A inputs to Scenario B!");
+        }
+
+        function toggleViewMode() {
+            const singleView = document.getElementById('single-scenario-view');
+            const compView = document.getElementById('comparison-view');
+            const modeLabel = document.getElementById('view-mode-label');
+
+            if (state.viewMode === 'single') {
+                state.viewMode = 'comparison';
+                singleView.classList.add('hidden');
+                compView.classList.remove('hidden');
+                modeLabel.innerText = "Single Scenario View";
+            } else {
+                state.viewMode = 'single';
+                compView.classList.add('hidden');
+                singleView.classList.remove('hidden');
+                modeLabel.innerText = "Side-by-Side Comparison";
+            }
+            updateUI();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon';
+                state.theme = 'light';
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun';
+                state.theme = 'dark';
+            }
+        }
+
+        function updateSummaryText(val) {
+            const text = `TIER 1 CIVIL LITIGATION VALUATION SUMMARY
+------------------------------------------------
+INPUT ASSUMPTIONS:
+• Gross Expected Damages (D): ${formatCurrency(val.damages)}
+• Win Probability (P_win): ${val.pwin}%
+• Defense Trial Costs (C_D): ${formatCurrency(val.cd)}
+${val.policyLimit ? `• Policy Limit Cap (L): ${formatCurrency(val.policyLimit)}` : '• Policy Limit: Uncapped'}
+
+VALUATION BREAKDOWN:
+• Plaintiff Expected Verdict Floor (EV_Plaintiff): ${formatCurrency(val.evPlaintiff)}
+• Expected Defense Outlay Ceiling (EV_Defendant): ${formatCurrency(val.evDefendant)}
+• ZOPA Target Settlement Window: ${formatCurrency(val.evPlaintiff)} to ${formatCurrency(val.evDefendant)}
+• Defense Cost Bargaining Buffer: ${formatCurrency(val.zopaSpread)}
+
+STRATEGIC TAKEAWAY:
+Settlement within the ${formatCurrency(val.evPlaintiff)} – ${formatCurrency(val.evDefendant)} ZOPA is economically rational for both parties. The defense avoids incurring ${formatCurrency(val.cd)} in trial expenses, while the plaintiff guarantees recovery without trial risk.`;
+
+            document.getElementById('output-summary-text').value = text;
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function copyValuationSummary() {
+            const text = document.getElementById('output-summary-text').value;
+            copyToClipboard(text);
+            showToast("Valuation summary copied to clipboard!");
+        }
+
+        function copySystemPrompt() {
+            const policyText = state.scenarioA.policyEnabled ? `$${state.scenarioA.policy.toLocaleString()}` : 'Uncapped / Not Specified';
+            
+            const prompt = `You are an expert legal risk analyst and litigation strategist. Your task is to process a quick civil claim evaluation using the Tier 1 (Low) Litigation Model and generate a concise valuation summary.
+
+### MATHEMATICAL MODEL FORMULAS:
+
+1. Plaintiff Expected Trial Verdict:
+EV_plaintiff = Gross_Damages * Win_Probability
+
+2. Expected Defense Cost of Litigation:
+EV_defendant = EV_plaintiff + Defense_Cost_Estimate
+
+3. Target Settlement Window (ZOPA):
+EV_plaintiff to Min(EV_defendant, Policy_Limit)
+
+### MISSING INFORMATION & ESTIMATION
+
+If any required input is omitted, marked "Unknown," or left blank:
+1. Estimate a reasonable value using commonly observed litigation practices and explain the basis for the estimate.
+2. Clearly distinguish all estimated values from user-provided values by labeling them "Model Estimate."
+3. Assign a confidence level (High, Moderate, or Low) to each estimated input.
+4. Explain how sensitive the valuation is to each estimated assumption.
+5. If a variable cannot reasonably be estimated (for example, applicable insurance policy limits), explicitly state that the analysis is limited by the missing information rather than making unsupported assumptions.
+
+### PROFESSIONAL RESPONSIBILITY
+
+This analysis is intended to assist attorney decision-making, not replace it.
+If legal conclusions depend upon unresolved factual disputes, uncertain law, or missing information, identify those uncertainties explicitly rather than assuming facts or presenting speculative conclusions as established.
+
+### INPUT CASE DATA:
+
+- Gross Expected Damages (D): $${state.scenarioA.damages.toLocaleString()}
+- Probability of Win % (P_win): ${state.scenarioA.pwin}%
+- Estimated Defense Trial Costs (C_D): $${state.scenarioA.cd.toLocaleString()}
+- Policy Limit / Asset Cap (L): ${policyText}
+
+### OUTPUT REQUIRED
+
+1. Executive Summary
+2. Input Summary Table
+3. Estimated Inputs (if any)
+4. Mathematical Valuation Breakdown
+5. Target Settlement Window (ZOPA)
+6. Strategic Takeaways
+7. Important Assumptions and Limitations
+8. Information Requiring Independent Attorney Verification`;
+            
+            copyToClipboard(prompt);
+            showToast("Full Tier 1 System Prompt copied for AI!");
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Clipboard copy failed:', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        window.onload = function() {
+            updateUI();
+        };
+    </script>
+</body>
+</html>
